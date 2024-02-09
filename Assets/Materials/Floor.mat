@@ -57,5 +57,6 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _smoothness: 0
     m_Colors: []
   m_BuildTextureStacks: []
