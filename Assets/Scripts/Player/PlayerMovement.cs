@@ -13,12 +13,22 @@ namespace Player
         [SerializeField] private float dragCoeff = 0.1f;
         [SerializeField] private float friction = 1f;
         [SerializeField] private float maxSpeed = 5f;
+
+        [FormerlySerializedAs("minimumDesiredVelocityThreshold")] [SerializeField]
+        private float minimumVelocityThreshold = 0.01f;
+
+        [SerializeField] private float mass = 1f;
+        [SerializeField] private float gravity = 9.81f;
         private PlayerInput _playerInput;
         private Vector3 _instantVelocity;
         private float _instantSpeed;
         private Vector3 _prevPos;
         private Vector3 _curPos;
-        //private float _inputTime;
+        private float _currentAccelerationX;
+        private float _currentAccelerationZ;
+
+        private float _currentAccelerationFrictionX;
+        private float _currentAccelerationFrictionZ;
 
 
         private void Awake()
@@ -32,6 +42,8 @@ namespace Player
         {
             Move();
         }
+
+        private Vector3 _desiredVelocity;
 
         private void Move()
         {
@@ -48,29 +60,42 @@ namespace Player
                 float yVelocityDelta = acceleration * Time.deltaTime * yInput;
 
                 //new velocity = current velocity + velocity gain
-                Vector3 velocity = _instantVelocity + new Vector3(xVelocityDelta, 0,
+                _desiredVelocity += new Vector3(xVelocityDelta, 0,
                     yVelocityDelta);
 
                 // velocity loss because of drag
-                Vector3 drag = -velocity * dragCoeff;
-                velocity += drag;
+                _desiredVelocity -= _desiredVelocity.normalized * (dragCoeff * mass * gravity * Time.deltaTime);
+
+                if (_desiredVelocity.magnitude > maxSpeed)
+                    _desiredVelocity = _desiredVelocity.normalized * maxSpeed;
+
+                Vector3 finalVelocity = _desiredVelocity;
 
 
-                if (velocity.magnitude > maxSpeed)
-                    velocity = velocity.normalized * maxSpeed;
+                finalVelocity = Vector3.Lerp(_instantVelocity, _desiredVelocity, 1.25f * Time.deltaTime);
 
-                positionDelta = velocity * Time.deltaTime;
-
-                // Vector3 positionDelta = Vector3.Lerp(Vector3.zero, rawPositionDelta, 0.5f); //new pos
+                positionDelta = finalVelocity * Time.deltaTime;
             }
             else
             {
-                //_inputTime = 0;
-                if (Mathf.Abs(_instantSpeed) >= 0.001f) // if player are moving
+                if (_instantVelocity.magnitude <= minimumVelocityThreshold)
                 {
-                    Vector3 velocity = _instantVelocity - //current instant velocity
-                                       _instantVelocity.normalized * (friction * Time.deltaTime); // velocity loss
-                    positionDelta = velocity * Time.deltaTime;
+                    _desiredVelocity = Vector3.zero;
+                    _instantVelocity = Vector3.zero;
+                }
+
+                if (_instantVelocity.magnitude > minimumVelocityThreshold) // if player are moving
+                {
+                    _desiredVelocity -= _desiredVelocity.normalized *
+                                        (friction * Time.deltaTime); // velocity loss
+
+                    if (_desiredVelocity.magnitude > maxSpeed)
+                        _desiredVelocity = _desiredVelocity.normalized * maxSpeed;
+
+                    Vector3 finalVelocity = _desiredVelocity;
+
+                    finalVelocity = Vector3.Lerp(_instantVelocity, _desiredVelocity, 2.5f * Time.deltaTime);
+                    positionDelta = finalVelocity * Time.deltaTime;
                 }
             }
 
@@ -84,6 +109,8 @@ namespace Player
         {
             _instantVelocity = (_curPos - _prevPos) / Time.deltaTime;
             _instantSpeed = _instantVelocity.magnitude;
+
+            if (_instantSpeed >= maxSpeed) _instantVelocity = _instantVelocity.normalized * maxSpeed;
         }
 
         private Vector3 Clamp(Vector3 vec, Vector3 min, Vector3 max) =>
@@ -109,6 +136,7 @@ namespace Player
             Color moveDirColor = Color.green;
             Color forwardColor = Color.blue;
             Color velocityColor = Color.magenta;
+            Color desiredVelocityColor = Color.red;
             Vector3 pos = transform.position;
             if (_playerInput != null)
             {
@@ -128,7 +156,11 @@ namespace Player
 
             Gizmos.color = velocityColor;
             Gizmos.DrawLine(pos, pos + _instantVelocity);
-            Gizmos.DrawSphere(pos + _instantVelocity, 0.025f);
+            Gizmos.DrawSphere(pos + _instantVelocity, 0.025f * _instantVelocity.magnitude);
+
+            Gizmos.color = desiredVelocityColor;
+            Gizmos.DrawLine(pos, pos + _desiredVelocity);
+            Gizmos.DrawSphere(pos + _desiredVelocity, 0.025f);
         }
     }
 }
