@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Player
@@ -7,6 +8,10 @@ namespace Player
     {
         [Header("Movement")] [Range(0, 200f)] [SerializeField]
         private float acceleration = 1f;
+
+        [Range(0, 10f)] [SerializeField] private float velocityActiveInterpolationSpeed = 1.25f;
+        [Range(0, 10f)] [SerializeField] private float velocityPassiveInterpolationSpeed = 2.5f;
+        [Range(0, 10f)] [SerializeField] private float rotationInterpolationSpeed = 1.25f;
 
         [Header("Velocity loss")] [SerializeField] [Range(0, 10f)]
         private float dragCoefficient = 0.1f;
@@ -26,6 +31,8 @@ namespace Player
         [Header("Other")] [Range(0, 1f)] [SerializeField]
         private float sphereCastRadius = 0.2f;
 
+        [Range(0, 1f)] [SerializeField] private float sphereCastDistance = 1f;
+
         [SerializeField] private LayerMask interactableObjects;
 
         private PlayerInput _playerInput;
@@ -36,25 +43,28 @@ namespace Player
         private Vector3 _prevPos;
         private Vector3 _curPos;
 
+        private readonly RaycastHit[] _raycastHits = new RaycastHit[20];
 
         private void Awake()
         {
             _playerInput = GetComponent<PlayerInput>();
         }
 
+        private void Start()
+        {
+        }
 
         // Update is called once per frame
         private void Update()
         {
             Move();
-            CheckForCollisions();
+            // CheckForCollisions();
         }
 
 
         private void Move()
         {
             _prevPos = transform.position;
-
             Vector2 input = _playerInput.GetMovementVector().normalized;
             Vector3 positionDelta = Vector3.zero;
 
@@ -75,7 +85,8 @@ namespace Player
 
                 ConstraintDesiredVelocity();
 
-                var finalVelocity = Vector3.Lerp(_instantVelocity, _desiredVelocity, 1.25f * Time.deltaTime);
+                var finalVelocity = Vector3.Lerp(_instantVelocity, _desiredVelocity,
+                    velocityActiveInterpolationSpeed * Time.deltaTime);
 
                 positionDelta = finalVelocity * Time.deltaTime;
             }
@@ -93,12 +104,15 @@ namespace Player
 
                     ConstraintDesiredVelocity();
 
-                    var finalVelocity = Vector3.Lerp(_instantVelocity, _desiredVelocity, 2.5f * Time.deltaTime);
+                    var finalVelocity = Vector3.Lerp(_instantVelocity, _desiredVelocity,
+                        velocityPassiveInterpolationSpeed * Time.deltaTime);
                     positionDelta = finalVelocity * Time.deltaTime;
                 }
             }
 
-            transform.Translate(positionDelta);
+            transform.forward = Vector3.Slerp(transform.forward, _instantVelocity,
+                rotationInterpolationSpeed * Time.deltaTime);
+            transform.Translate(positionDelta, Space.World);
 
             _curPos = transform.position;
 
@@ -123,34 +137,34 @@ namespace Player
             _instantSpeed = _instantVelocity.magnitude;
         }
 
-        private Vector3 Clamp(Vector3 vec, Vector3 min, Vector3 max) =>
-            new(
-                Clamp(vec.x, min.x, max.x), Clamp(vec.y, min.y, max.y), Clamp(vec.z, min.z, max.z)
-            );
-
-        private float Clamp(float val, float min, float max)
-        {
-            if (val < min)
-                return min;
-
-            if (val > max)
-                return max;
-
-            return val;
-        }
+        private Vector3 _lastCastDirection = Vector3.zero;
 
         private void CheckForCollisions()
         {
-            RaycastHit[] raycastHits = new RaycastHit[20];
+            if (_instantVelocity != Vector3.zero)
+            {
+                _lastCastDirection = _instantVelocity.normalized;
+            }
+
             Vector3 position = transform.position;
-            Physics.SphereCastNonAlloc(position, sphereCastRadius, position.normalized, raycastHits, 0,
+            Physics.SphereCastNonAlloc(position, sphereCastRadius,
+                _lastCastDirection,
+                _raycastHits, sphereCastDistance,
                 interactableObjects);
-            foreach (var hit in raycastHits)
+            foreach (var hit in _raycastHits)
             {
                 if (hit.collider != null)
                 {
                     Debug.Log(hit.collider.name);
                 }
+            }
+        }
+
+        private void ClearHits()
+        {
+            for (int i = 0; i < _raycastHits.Length; i++)
+            {
+                _raycastHits[i] = default;
             }
         }
 
@@ -163,6 +177,7 @@ namespace Player
             Color velocityColor = Color.magenta;
             Color desiredVelocityColor = Color.red;
             Color sphereColor = Color.green;
+            Color hitsColor = Color.white;
 
             Vector3 pos = transform.position;
             if (_playerInput != null)
@@ -190,7 +205,27 @@ namespace Player
             Gizmos.DrawSphere(pos + _desiredVelocity, 0.025f);
 
             Gizmos.color = sphereColor;
-            Gizmos.DrawWireSphere(transform.position, sphereCastRadius);
+            Gizmos.DrawWireSphere(transform.position + _lastCastDirection * sphereCastDistance,
+                sphereCastRadius);
+
+            Gizmos.color = hitsColor;
+            foreach (var hit in _raycastHits)
+            {
+                if (hit.collider != null)
+                {
+                    Vector3 hitPos = hit.point;
+                    Gizmos.DrawLine(pos, hitPos);
+                    Gizmos.DrawWireSphere(hitPos, 0.075f);
+
+                    Gizmos.DrawLine(hitPos, hitPos + hit.normal);
+                    Gizmos.DrawWireSphere(hitPos + hit.normal, 0.1f);
+                }
+            }
+
+            ClearHits();
         }
+
+        public Vector3 InstantVelocity => _instantVelocity;
+        public float Mass => mass;
     }
 }

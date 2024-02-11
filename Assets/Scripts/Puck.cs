@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class Puck : MonoBehaviour
 {
-    [Header("Velocity loss")] [SerializeField] [Range(0, 10f)]
-    private float dragCoefficient = 0.1f;
-
-    [Range(0, 10f)] [SerializeField] private float frictionCoefficient = 1f;
+    [Header("Velocity loss")] [Range(0, 10f)] [SerializeField]
+    private float frictionCoefficient = 1f;
 
     [Header("Constraints")] [Range(0, 30f)] [SerializeField]
     private float maxSpeed = 5f;
@@ -40,18 +38,26 @@ public class Puck : MonoBehaviour
         Move();
     }
 
+    public void AddForce(Vector3 force)
+    {
+        force.y = 0;
+        Debug.Log($"force{force}: {force.magnitude}");
+        _instantVelocity = force;
+        _desiredVelocity = force;
+    }
+
     private void Move()
     {
         _prevPos = transform.position;
         Vector3 positionDelta = Vector3.zero;
 
 
-        if (_instantSpeed <= minimumVelocityThreshold)
+        if (_instantVelocity.magnitude <= minimumVelocityThreshold)
         {
             ResetVelocities();
         }
 
-        if (_instantSpeed > minimumVelocityThreshold) // if player are moving
+        if (_instantVelocity.magnitude > minimumVelocityThreshold) // if player are moving
         {
             _desiredVelocity -= _desiredVelocity.normalized *
                                 (mass * frictionCoefficient * gravity * Time.deltaTime); // velocity loss
