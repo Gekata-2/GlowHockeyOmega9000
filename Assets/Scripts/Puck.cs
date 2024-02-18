@@ -17,7 +17,7 @@ public class Puck : MonoBehaviour
 
     [Range(0, 20f)] [SerializeField] private float gravity = 9.81f;
 
-    [Range(0, 1f)] [SerializeField] private float bounciness = 1f;
+   // [Range(0, 1f)] [SerializeField] private float bounciness = 1f;
 
     private Vector3 _desiredVelocity;
     private Vector3 _instantVelocity;
@@ -33,6 +33,7 @@ public class Puck : MonoBehaviour
     }
 
     // Update is called once per frame
+
     private void Update()
     {
         Move();
