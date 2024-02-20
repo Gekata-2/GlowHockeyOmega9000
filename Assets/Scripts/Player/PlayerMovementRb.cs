@@ -46,6 +46,7 @@ namespace Player
             _playerInput = GetComponent<PlayerInput>();
             _collider = GetComponent<Collider>();
             _rigidbody = GetComponent<Rigidbody>();
+            _rigidbody.maxLinearVelocity = maxSpeed;
         }
 
         private void FixedUpdate()
@@ -53,19 +54,22 @@ namespace Player
             ChangeVelocity();
         }
 
+        private Vector3 _velocityGain = Vector3.zero;
+
         private void ChangeVelocity()
         {
             Vector2 input = _playerInput.GetMovementVector().normalized;
-
 
             if (input != Vector2.zero)
             {
                 // velocity gain
                 float xVelocityDelta = acceleration * Time.deltaTime * input.x;
-                float yVelocityDelta = acceleration * Time.deltaTime * input.y;
+                float zVelocityDelta = acceleration * Time.deltaTime * input.y;
 
                 //new velocity = current velocity + velocity gain
-                _desiredVelocity += new Vector3(xVelocityDelta, 0, yVelocityDelta);
+                _velocityGain.x = xVelocityDelta;
+                _velocityGain.z = zVelocityDelta;
+                _desiredVelocity += _velocityGain;
 
                 // velocity loss because of drag
                 _desiredVelocity -= _desiredVelocity.normalized *
@@ -84,61 +88,20 @@ namespace Player
                 {
                     _desiredVelocity -= _desiredVelocity.normalized *
                                         (frictionCoefficient * Time.deltaTime); // velocity loss
+
                     _rigidbody.velocity = Vector3.Lerp(_rigidbody.velocity, _desiredVelocity,
                         velocityPassiveInterpolationSpeed * Time.deltaTime);
                 }
             }
 
-            // _collider.bounds.Expand(-2 * SkinWidth);
-            // _rigidbody.velocity = CollideAndSlide(_rigidbody.velocity, transform.position, 0, _rigidbody.velocity);
-
-            ConstraintVelocity();
+            ConstraintDesiredVelocity();
             _instantVelocity = _rigidbody.velocity;
             transform.forward = Vector3.Slerp(transform.forward, _rigidbody.velocity,
                 rotationInterpolationSpeed * Time.deltaTime);
         }
 
-        private const int MaxBounces = 5;
-        private const float SkinWidth = 0.0015f;
-
-        private Vector3 CollideAndSlide(Vector3 vel, Vector3 pos, int depth, Vector3 initVelocity)
+        private void ConstraintDesiredVelocity()
         {
-            if (depth >= MaxBounces)
-                return Vector3.zero;
-
-            float collisionCheckDistance = vel.magnitude + SkinWidth;
-
-            if (Physics.SphereCast(pos, _collider.bounds.extents.x, vel.normalized,
-                    out RaycastHit hit, collisionCheckDistance, interactableObjects))
-            {
-                Vector3 snapToSurface = vel.normalized * (hit.distance - SkinWidth);
-                Vector3 leftover = vel - snapToSurface;
-
-                if (snapToSurface.magnitude <= SkinWidth)
-                    snapToSurface = Vector3.zero;
-
-                float scale = 1 - Vector3.Dot(new Vector3(hit.normal.x, 0, hit.normal.z).normalized,
-                    new Vector3(initVelocity.x, 0, initVelocity.z).normalized);
-                leftover = ProjectAndScale(leftover, hit.normal) * scale;
-
-                return snapToSurface + CollideAndSlide(leftover, pos + snapToSurface,
-                    depth + 1, initVelocity);
-            }
-
-            return vel;
-        }
-
-        private Vector3 ProjectAndScale(Vector3 vec, Vector3 normal)
-        {
-            float mag = vec.magnitude;
-            vec = Vector3.ProjectOnPlane(vec, normal).normalized;
-            return vec * mag;
-        }
-
-        private void ConstraintVelocity()
-        {
-            if (_rigidbody.velocity.magnitude > maxSpeed)
-                _rigidbody.velocity = _rigidbody.velocity.normalized * maxSpeed;
             if (_desiredVelocity.magnitude > maxSpeed)
                 _desiredVelocity = _desiredVelocity.normalized * maxSpeed;
         }
@@ -178,8 +141,11 @@ namespace Player
 
 
             Gizmos.color = velocityColor;
-            Gizmos.DrawLine(pos, pos + _instantVelocity);
-            Gizmos.DrawSphere(pos + _instantVelocity, 0.025f * _instantVelocity.magnitude);
+            if (_rigidbody != null)
+            {
+                Gizmos.DrawLine(pos, pos + _rigidbody.velocity);
+                Gizmos.DrawSphere(pos + _rigidbody.velocity, 0.025f * _rigidbody.velocity.magnitude);
+            }
 
             Gizmos.color = desiredVelocityColor;
             Gizmos.DrawLine(pos, pos + _desiredVelocity);
