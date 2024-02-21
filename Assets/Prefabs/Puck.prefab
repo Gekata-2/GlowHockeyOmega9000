@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 4480817053393533887}
   - component: {fileID: 131299252221634596}
   - component: {fileID: 4171473045864663014}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Puck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,9 +126,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3458033175491541926}
   serializedVersion: 4
-  m_Mass: 0.01
-  m_Drag: 0.8
-  m_AngularDrag: 0
+  m_Mass: 1
+  m_Drag: 0.35
+  m_AngularDrag: 0.35
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -157,6 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 246d7e0b47c4a0a4ab09f402a975405f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxSpeed: 15
 --- !u!136 &4171473045864663014
 CapsuleCollider:
   m_ObjectHideFlags: 0
