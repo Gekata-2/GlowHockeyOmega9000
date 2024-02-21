@@ -7,7 +7,8 @@ namespace Enemy
     {
         private NavMeshAgent _navMeshAgent;
         private Transform _target;
-        private bool _isChasing;
+
+        private bool IsChasing { get; set; }
 
         // Start is called before the first frame update
         private void Start()
@@ -23,7 +24,7 @@ namespace Enemy
                 if (TrySetTarget(GameObject.FindWithTag("NavTarget").transform)) StartChasing();
             }
 
-            if (_isChasing)
+            if (IsChasing)
             {
                 ChaseTarget();
             }
@@ -35,7 +36,6 @@ namespace Enemy
         {
             if (target == null) return false;
 
-
             SetTarget(target);
             return true;
         }
@@ -44,17 +44,33 @@ namespace Enemy
 
         public void StartChasing()
         {
-            _isChasing = true;
+            IsChasing = true;
             _navMeshAgent.isStopped = false;
         }
 
         public void StopChasing()
         {
-            _isChasing = false;
+            IsChasing = false;
             _navMeshAgent.isStopped = true;
             ResetTarget();
         }
 
-        private void ChaseTarget() => _navMeshAgent.destination = _target.position;
+
+        public void PauseChasing()
+        {
+            IsChasing = false;
+            _navMeshAgent.isStopped = true;
+        }
+
+        private void ChaseTarget()
+        {
+            var targetPos = _target.position;
+            var chasePos = new Vector3(targetPos.x, 0, targetPos.z);
+            _navMeshAgent.destination = chasePos;
+
+            transform.LookAt(chasePos);
+        }
+
+        public bool HasTarget() => _target != null;
     }
 }
