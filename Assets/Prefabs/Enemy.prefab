@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 4392927164090964758}
   - component: {fileID: 5232344668997978122}
   - component: {fileID: 468546351913915059}
+  - component: {fileID: 2434090905061889317}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -143,9 +144,6 @@ MonoBehaviour:
   triggerZone: {fileID: 0}
   attackCooldown: 7
   attackAnimTime: 2
-  _attackCooldownTimer: 0
-  _attackAnimTimer: 0
-  _state: 0
 --- !u!114 &468546351913915059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,6 +162,20 @@ MonoBehaviour:
   interactableObjects:
     serializedVersion: 2
     m_Bits: 4294967295
+  damage: 51
+--- !u!114 &2434090905061889317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 828308458084427584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3504f928c01a452696421a25b219fc35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
 --- !u!1 &1192070334477298251
 GameObject:
   m_ObjectHideFlags: 0

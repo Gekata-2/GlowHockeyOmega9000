@@ -4,16 +4,18 @@ using UnityEngine;
 namespace Enemy
 {
     [RequireComponent(typeof(EnemyNavigation))]
-    public class EnemyAI : MonoBehaviour
+    public class EnemyAI : MonoBehaviour, IDamageable
     {
         [SerializeField] private TriggerZone triggerZone;
         [SerializeField] private float attackCooldown = 5f;
         [SerializeField] private float attackAnimTime = 0.5f;
         private EnemyNavigation _navigation;
+        private HealthComponent _health;
         private EnemyAttack _attack;
-        [SerializeField] private float _attackCooldownTimer = 0f;
-        [SerializeField] private float _attackAnimTimer = 0f;
+        private float _attackCooldownTimer = 0f;
+        private float _attackAnimTimer = 0f;
         private bool _canAttack;
+        private State _state;
 
         public enum State
         {
@@ -22,12 +24,12 @@ namespace Enemy
             Attacking
         }
 
-        [SerializeField] private State _state;
 
         private void Awake()
         {
             _navigation = GetComponent<EnemyNavigation>();
             _attack = GetComponent<EnemyAttack>();
+            _health = GetComponent<HealthComponent>();
             _state = State.Idle;
             _canAttack = true;
         }
@@ -41,10 +43,33 @@ namespace Enemy
             }
 
             _attack.onPlayerInAttackRange += OnPlayerInAttackRange;
+            _health.onHealthBelowZero += OnHealthBelowZero;
+        }
+
+        private void OnDestroy()
+        {
+            if (triggerZone != null)
+            {
+                triggerZone.onPlayerEnter -= OnPlayerEnterTriggerZone;
+                triggerZone.onPlayerExit -= OnPlayerExitTriggerZone;
+            }
+
+            _attack.onPlayerInAttackRange -= OnPlayerInAttackRange;
+            _health.onHealthBelowZero -= OnHealthBelowZero;
+        }
+
+        private void OnHealthBelowZero()
+        {
+            Destroy(gameObject);
         }
 
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                TakeDamage(40f);
+            }
+
             switch (_state)
             {
                 case State.Idle:
@@ -66,6 +91,7 @@ namespace Enemy
                         _attackAnimTimer = 0f;
                         _attackCooldownTimer = 0f;
                         _canAttack = false;
+                        _attack.TryAttack();
                         SwitchState(State.Chasing);
                     }
 
@@ -73,6 +99,11 @@ namespace Enemy
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public void TakeDamage(float damage)
+        {
+            _health.DecreaseHealth(damage);
         }
 
         private void SwitchState(State state)
@@ -107,16 +138,17 @@ namespace Enemy
         {
             if (!_canAttack) return;
             _state = State.Attacking;
-            Attack(e.PlayerCollider);
+            StartAttack(e.PlayerCollider);
         }
 
-        private void Attack(Collider playerCollider)
+        private void StartAttack(Collider playerCollider)
         {
             Debug.Log("Attacking player!!!");
             _canAttack = false;
             SwitchState(State.Attacking);
             _navigation.PauseChasing();
         }
+
 
         private void OnPlayerEnterTriggerZone(object sender, TriggerZone.PlayerEnterEventArgs e)
         {

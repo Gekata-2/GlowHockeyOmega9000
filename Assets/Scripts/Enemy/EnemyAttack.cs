@@ -1,4 +1,5 @@
 ﻿using System;
+using Player;
 using UnityEngine;
 
 namespace Enemy
@@ -9,6 +10,7 @@ namespace Enemy
         [SerializeField] private float capsuleHeight;
         [SerializeField] private Transform startPoint;
         [SerializeField] private LayerMask interactableObjects;
+        [SerializeField] private float damage;
         private bool _checkObjectsInAttackRange;
 
 
@@ -64,17 +66,35 @@ namespace Enemy
             _centerFar = startPos + forward * (capsuleRadius * 3 + capsuleHeight);
 
 
-            bool isOverlap = CastOverlapCapsule(startPos, _centerNear, _centerFar);
+            bool isOverlap = CastOverlapCapsule(_centerNear, _centerFar);
 
             return isOverlap;
         }
 
-        private bool CastOverlapCapsule(Vector3 startPos, Vector3 centerNear, Vector3 centerFar)
+        private bool CastOverlapCapsule(Vector3 centerNear, Vector3 centerFar)
         {
             return Physics.OverlapCapsuleNonAlloc(centerNear, centerFar,
                 capsuleRadius, _collidersOverlap, interactableObjects) > 0;
         }
 
+        public void TryAttack()
+        {
+            if (!IsObjectsInAttackRange())
+            {
+                ClearColliders();
+                return;
+            }
+
+            if (TryGetPlayerCollider(out Collider playerCollider))
+            {
+                if (playerCollider.TryGetComponent(out PlayerData player))
+                {
+                    player.TakeDamage(damage);
+                }
+
+                ClearColliders();
+            }
+        }
 
         private bool TryGetPlayerCollider(out Collider playerCollider)
         {
