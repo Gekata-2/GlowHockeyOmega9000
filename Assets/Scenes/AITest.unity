@@ -977,6 +977,11 @@ PrefabInstance:
       propertyPath: triggerZone
       value: 
       objectReference: {fileID: 642961885}
+    - target: {fileID: 5894592258345010574, guid: 1f8005d9120868e46a8d3c98dd5e81bc,
+        type: 3}
+      propertyPath: triggerZone
+      value: 
+      objectReference: {fileID: 642961885}
     - target: {fileID: 6399722913025368896, guid: 1f8005d9120868e46a8d3c98dd5e81bc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1072,6 +1077,11 @@ PrefabInstance:
       value: 0.65
       objectReference: {fileID: 0}
     - target: {fileID: 5232344668997978122, guid: 1f8005d9120868e46a8d3c98dd5e81bc,
+        type: 3}
+      propertyPath: triggerZone
+      value: 
+      objectReference: {fileID: 642961885}
+    - target: {fileID: 5894592258345010574, guid: 1f8005d9120868e46a8d3c98dd5e81bc,
         type: 3}
       propertyPath: triggerZone
       value: 

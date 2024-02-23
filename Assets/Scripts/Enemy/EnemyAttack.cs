@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Enemy
 {
-    public class EnemyAttack : MonoBehaviour
+    [Serializable]
+    public class EnemyAttack
     {
         [SerializeField] private float capsuleRadius;
         [SerializeField] private float capsuleHeight;
@@ -35,22 +36,22 @@ namespace Enemy
 
         private void Update()
         {
-            if (!_checkObjectsInAttackRange)
-                return;
-
-            if (!IsObjectsInAttackRange())
-            {
-                ClearColliders();
-                return;
-            }
-
-
-            if (TryGetPlayerCollider(out Collider playerCollider))
-            {
-                onPlayerInAttackRange?.Invoke(this,
-                    new PlayerInAttackRangeEventArgs { PlayerCollider = playerCollider });
-                ClearColliders();
-            }
+            // if (!_checkObjectsInAttackRange)
+            //     return;
+            //
+            // if (!IsObjectsInAttackRange())
+            // {
+            //     ClearColliders();
+            //     return;
+            // }
+            //
+            //
+            // if (TryGetPlayerCollider(out Collider playerCollider))
+            // {
+            //     onPlayerInAttackRange?.Invoke(this,
+            //         new PlayerInAttackRangeEventArgs { PlayerCollider = playerCollider });
+            //     ClearColliders();
+            // }
         }
 
 
@@ -58,10 +59,9 @@ namespace Enemy
         //      (------------+------------)--------------------(------------+------------)
         //      ^
         //  start point   
-        private bool IsObjectsInAttackRange()
+        private bool IsObjectsInAttackRange(Vector3 forward)
         {
             var startPos = startPoint.position;
-            Vector3 forward = transform.forward;
             _centerNear = startPos + forward * capsuleRadius;
             _centerFar = startPos + forward * (capsuleRadius * 3 + capsuleHeight);
 
@@ -77,9 +77,9 @@ namespace Enemy
                 capsuleRadius, _collidersOverlap, interactableObjects) > 0;
         }
 
-        public void TryAttack()
+        public void TryAttack(Vector3 forward)
         {
-            if (!IsObjectsInAttackRange())
+            if (!IsObjectsInAttackRange(forward))
             {
                 ClearColliders();
                 return;

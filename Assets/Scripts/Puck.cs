@@ -20,7 +20,7 @@ public class Puck : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.transform.TryGetComponent(out EnemyAI enemy))
+        if (other.transform.TryGetComponent(out EnemyStateMachine enemy))
         {
             enemy.TakeDamage(baseDamage);
         }
