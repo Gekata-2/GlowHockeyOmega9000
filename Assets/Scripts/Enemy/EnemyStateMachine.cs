@@ -105,7 +105,7 @@ namespace Enemy
 
         private void OnDrawGizmos()
         {
-            objectDetection.OnDrawGizmos();
+            //objectDetection.OnDrawGizmos();
         }
     }
 }
