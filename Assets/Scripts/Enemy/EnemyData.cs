@@ -1,9 +1,9 @@
 using UnityEngine;
 
-namespace Player
+namespace Enemy
 {
     [RequireComponent(typeof(HealthComponent))]
-    public class PlayerData : MonoBehaviour, IDamageable
+    public class EnemyData : MonoBehaviour, IDamageable
     {
         private HealthComponent _health;
 

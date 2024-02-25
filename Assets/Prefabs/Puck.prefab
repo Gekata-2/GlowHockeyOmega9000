@@ -158,6 +158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 15
+  baseDamage: 60
 --- !u!136 &4171473045864663014
 CapsuleCollider:
   m_ObjectHideFlags: 0

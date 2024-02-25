@@ -13,6 +13,7 @@ public class FollowPlayer : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (_player == null) return;
         transform.position = _player.transform.position + positionShift;
         transform.LookAt(_player.transform, _player.transform.up);
     }

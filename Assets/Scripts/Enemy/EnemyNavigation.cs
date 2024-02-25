@@ -20,12 +20,12 @@ namespace Enemy
         public void StopChasing()
         {
             _navMeshAgent.isStopped = true;
+            _navMeshAgent.destination = default;
         }
 
         public void ChaseTarget(Transform target)
         {
             _navMeshAgent.destination = target.position;
-            ;
         }
     }
 }

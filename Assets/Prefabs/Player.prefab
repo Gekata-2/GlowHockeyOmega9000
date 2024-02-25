@@ -97,6 +97,8 @@ GameObject:
   - component: {fileID: 1765020916120640607}
   - component: {fileID: 4319351587296560177}
   - component: {fileID: 7212458077250057408}
+  - component: {fileID: 937064404119408962}
+  - component: {fileID: 4092109366286561736}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -221,3 +223,29 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &937064404119408962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8688539202788292147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3504f928c01a452696421a25b219fc35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  health: 100
+--- !u!114 &4092109366286561736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8688539202788292147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b110a03403582514e90da36856e6cb88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

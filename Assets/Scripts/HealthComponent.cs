@@ -1,23 +1,22 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [Serializable]
 public class HealthComponent : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
-    private float _health;
+    [SerializeField] private float health;
     public Action onHealthBelowZero;
 
     public HealthComponent(float startHealth, float maxHealth)
     {
-        _health = startHealth;
+        health = startHealth;
         this.maxHealth = maxHealth;
     }
 
     public HealthComponent()
     {
-        _health = maxHealth;
+        health = maxHealth;
     }
 
 
@@ -25,7 +24,7 @@ public class HealthComponent : MonoBehaviour
     {
         if (delta >= 0)
         {
-            _health += delta;
+            health += delta;
             ClampHealth();
         }
     }
@@ -34,21 +33,21 @@ public class HealthComponent : MonoBehaviour
     {
         if (delta >= 0)
         {
-            _health -= delta;
+            health -= delta;
             ClampHealth();
         }
     }
 
     private void ClampHealth()
     {
-        if (_health <= 0)
+        if (health <= 0)
         {
-            _health = 0;
+            health = 0;
             onHealthBelowZero?.Invoke();
         }
-        else if (_health > maxHealth)
+        else if (health > maxHealth)
         {
-            _health = maxHealth;
+            health = maxHealth;
         }
     }
 }

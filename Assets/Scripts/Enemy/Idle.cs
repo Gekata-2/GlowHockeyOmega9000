@@ -7,6 +7,7 @@ namespace Enemy
         public override void EnterState(EnemyStateMachine stateMachine)
         {
             Debug.Log($"Enter Idle state");
+            stateMachine.onIdleStateEnter?.Invoke();
         }
 
         public override void Update(EnemyStateMachine stateMachine)
@@ -27,6 +28,7 @@ namespace Enemy
         public override void OnPlayerExitTriggerZone(EnemyStateMachine stateMachine)
         {
         }
+
 
         public override string ToString()
         {

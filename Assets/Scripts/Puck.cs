@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Enemy;
 using UnityEngine;
 
@@ -20,9 +17,9 @@ public class Puck : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.transform.TryGetComponent(out EnemyStateMachine enemy))
+        if (other.transform.TryGetComponent(out EnemyData enemy))
         {
-            enemy.TakeDamage(baseDamage);
+            enemy.TakeDamage(baseDamage + baseDamage * _rigidbody.velocity.magnitude / maxSpeed);
         }
     }
 }

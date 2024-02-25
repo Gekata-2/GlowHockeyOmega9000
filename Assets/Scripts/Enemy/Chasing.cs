@@ -8,7 +8,12 @@ namespace Enemy
 
         public override void EnterState(EnemyStateMachine stateMachine)
         {
+            if (stateMachine.target == null)
+                stateMachine.SwitchState(stateMachine.Idle);
+
             Debug.Log($"Enter Chasing state");
+            stateMachine.onChasingStateEnter?.Invoke();
+
             SetTarget(stateMachine.target);
             stateMachine.Navigation.StartChasing();
         }
@@ -18,6 +23,21 @@ namespace Enemy
             if (HasTarget())
             {
                 stateMachine.Navigation.ChaseTarget(_target);
+                if (stateMachine.canAttack)
+                {
+                    stateMachine.objectDetection.CheckForwardObjects(stateMachine.Forward);
+                    if (stateMachine.objectDetection.TryGetPlayerCollider(out Collider playerCollider))
+                    {
+                        stateMachine.objectDetection.ClearColliders();
+                        stateMachine.SwitchState(stateMachine.Attacking);
+                    }
+                }
+
+                stateMachine.objectDetection.ClearColliders();
+            }
+            else
+            {
+                stateMachine.SwitchState(stateMachine.Idle);
             }
 
             if (Input.GetKeyDown(KeyCode.N))
@@ -36,6 +56,7 @@ namespace Enemy
         private void SetTarget(Transform target) => _target = target;
 
         private void ResetTarget() => _target = null;
+        private bool HasTarget() => _target != null;
 
         public override void OnPlayerExitTriggerZone(EnemyStateMachine stateMachine)
         {
@@ -44,7 +65,6 @@ namespace Enemy
             stateMachine.SwitchState(stateMachine.Idle);
         }
 
-        private bool HasTarget() => _target != null;
 
         public override string ToString()
         {
