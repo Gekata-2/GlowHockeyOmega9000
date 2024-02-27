@@ -6,7 +6,7 @@ using UnityEngine;
 public class LevelStateHandler : MonoBehaviour
 {
     public Action onLevelComplete;
-    private List<TriggerZone> _triggerZones;
+    private readonly List<TriggerZone> _triggerZones = new();
 
     private void Start()
     {
