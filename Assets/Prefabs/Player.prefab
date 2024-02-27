@@ -83,6 +83,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2663861660571595407
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5934258055895222836}
+  m_Layer: 6
+  m_Name: PuckParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5934258055895222836
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2663861660571595407}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.485}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 568325360709655909}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8688539202788292147
 GameObject:
   m_ObjectHideFlags: 0
@@ -96,9 +127,9 @@ GameObject:
   - component: {fileID: 6860825053140180556}
   - component: {fileID: 1765020916120640607}
   - component: {fileID: 4319351587296560177}
-  - component: {fileID: 7212458077250057408}
   - component: {fileID: 937064404119408962}
   - component: {fileID: 4092109366286561736}
+  - component: {fileID: 7316031645514113404}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -120,6 +151,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5009354457899270685}
+  - {fileID: 5934258055895222836}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &7973457189478759192
@@ -173,13 +205,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881632432e7ae3d43a90a295208dd06f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 120
-  velocityActiveInterpolationSpeed: 1.25
-  velocityPassiveInterpolationSpeed: 2.5
-  rotationInterpolationSpeed: 3
-  dragCoefficient: 0.25
+  acceleration: 45
+  velocityActiveInterpolationSpeed: 2
+  velocityPassiveInterpolationSpeed: 3
+  rotationInterpolationSpeed: 7
+  dragCoefficient: 0.3
   frictionCoefficient: 7
-  maxSpeed: 7
+  maxSpeed: 8
   minimumVelocityThreshold: 0.0352
   interactableObjects:
     serializedVersion: 2
@@ -207,22 +239,6 @@ CapsuleCollider:
   m_Height: 0.5
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!208 &7212458077250057408
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8688539202788292147}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.15, y: 0.315, z: 0.15}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!114 &937064404119408962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,3 +265,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b110a03403582514e90da36856e6cb88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7316031645514113404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8688539202788292147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e291c6c7bc6323644b4038cb99fbc44a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  puckTransform: {fileID: 0}
+  puckParent: {fileID: 5934258055895222836}
+  cooldown: 3
+  releaseForce: 7.5

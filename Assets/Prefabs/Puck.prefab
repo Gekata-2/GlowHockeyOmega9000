@@ -152,13 +152,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3458033175491541926}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 246d7e0b47c4a0a4ab09f402a975405f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 15
-  baseDamage: 60
+  maxSpeed: 10
+  baseDamage: 50
 --- !u!136 &4171473045864663014
 CapsuleCollider:
   m_ObjectHideFlags: 0

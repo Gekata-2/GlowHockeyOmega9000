@@ -5,7 +5,9 @@ namespace Enemy
     [RequireComponent(typeof(HealthComponent))]
     public class EnemyData : MonoBehaviour, IDamageable
     {
+        [SerializeField] private TriggerZone triggerZone;
         private HealthComponent _health;
+
 
         private void Awake()
         {
@@ -15,6 +17,7 @@ namespace Enemy
         private void Start()
         {
             _health.onHealthBelowZero += OnHealthBelowZero;
+            triggerZone.AddEnemy(this);
         }
 
         private void OnDestroy()
@@ -29,6 +32,7 @@ namespace Enemy
 
         private void OnHealthBelowZero()
         {
+            triggerZone.RemoveEnemy(this);
             Destroy(gameObject);
         }
     }
