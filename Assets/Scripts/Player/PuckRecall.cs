@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace Player
@@ -6,31 +7,39 @@ namespace Player
     {
         [SerializeField] private Transform puckTransform;
         [SerializeField] private Transform puckParent;
+        [SerializeField] private float cooldown;
         [Range(0, 30f)] [SerializeField] private float releaseForce;
         private PlayerInput _playerInput;
         private Puck _puck;
+        private bool _canRecall;
         private bool _isRecalled;
-
 
         private void Start()
         {
             _puck = puckTransform.GetComponent<Puck>();
             _playerInput = GetComponent<PlayerInput>();
             _playerInput.onPuckRecall += OnPuckRecall;
+            _canRecall = true;
         }
 
         private void OnPuckRecall()
         {
-            if (!_isRecalled)
+            if (_canRecall && !_isRecalled)
             {
                 RecallPuck();
+                _canRecall = false;
                 _isRecalled = true;
             }
-            else if (TryReleasePuck())
+            else if (_isRecalled)
             {
-                _isRecalled = false;
+                if (TryReleasePuck())
+                {
+                    _isRecalled = false;
+                    StartCoroutine(CooldownRoutine());
+                }
             }
         }
+
 
         private void RecallPuck()
         {
@@ -38,6 +47,12 @@ namespace Player
             puckTransform.parent = puckParent;
             puckTransform.rotation = puckParent.rotation;
             puckTransform.localPosition = Vector3.zero;
+        }
+
+        private IEnumerator CooldownRoutine()
+        {
+            yield return new WaitForSeconds(cooldown);
+            _canRecall = true;
         }
 
         private bool TryReleasePuck()
