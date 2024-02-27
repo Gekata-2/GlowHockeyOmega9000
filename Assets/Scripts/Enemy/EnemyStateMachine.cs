@@ -15,6 +15,7 @@ namespace Enemy
         [SerializeField] private float capsuleHeight;
         [SerializeField] private LayerMask interactableObjects;
         [SerializeField] public float damage = 10f;
+        [SerializeField] private string curState;
         public EnemyNavigation Navigation;
         public EnemyObjectDetection objectDetection;
         private HealthComponent _health;
@@ -62,6 +63,7 @@ namespace Enemy
         private void Update()
         {
             _state.Update(this);
+            curState = _state.ToString();
         }
 
         private void OnDestroy()

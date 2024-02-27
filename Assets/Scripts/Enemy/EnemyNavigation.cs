@@ -21,11 +21,14 @@ namespace Enemy
         {
             _navMeshAgent.isStopped = true;
             _navMeshAgent.destination = default;
+            ResetPath();
         }
 
         public void ChaseTarget(Transform target)
         {
             _navMeshAgent.destination = target.position;
         }
+
+        public void ResetPath() => _navMeshAgent.ResetPath();
     }
 }

@@ -8,6 +8,7 @@ namespace Enemy
         {
             Debug.Log($"Enter Idle state");
             stateMachine.onIdleStateEnter?.Invoke();
+            stateMachine.Navigation.StopChasing();
         }
 
         public override void Update(EnemyStateMachine stateMachine)
